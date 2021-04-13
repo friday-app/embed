@@ -1,5 +1,5 @@
 {
-  "name": "@editorjs/embed",
+  "name": "@friday-app/embed",
   "version": "2.4.1",
   "keywords": [
     "codex editor",
@@ -10,7 +10,7 @@
   ],
   "description": "Embed Tool for Editor.js",
   "license": "MIT",
-  "repository": "https://github.com/editor-js/embed",
+  "repository": "https://github.com/friday-app/embed",
   "main": "./dist/bundle.js",
   "scripts": {
     "build": "webpack --mode production",
