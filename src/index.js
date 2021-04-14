@@ -44,11 +44,12 @@ export default class Embed {
    *   api - Editor.js API
    *   readOnly - read-only mode flag
    */
-  constructor({ data, api, readOnly }) {
+  constructor({ data, api, readOnly, ...rest }) {
     this.api = api;
     this._data = {};
     this.element = null;
     this.readOnly = readOnly;
+    console.log("rest", rest);
 
     this.data = data;
   }
