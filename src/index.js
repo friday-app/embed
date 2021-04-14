@@ -216,7 +216,7 @@ export default class Embed {
   static prepare() {
     const { services = {} } = this.config;
 
-    console.log("config", config);
+    console.log("config", this.config);
     console.log("services", services);
 
     let entries = Object.entries(SERVICES);
