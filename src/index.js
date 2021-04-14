@@ -44,12 +44,12 @@ export default class Embed {
    *   api - Editor.js API
    *   readOnly - read-only mode flag
    */
-  constructor({ data, api, readOnly, ...rest }) {
+  constructor({ data, api, readOnly, config }) {
     this.api = api;
     this._data = {};
     this.element = null;
     this.readOnly = readOnly;
-    console.log("rest", rest);
+    this.config = config || {};
 
     this.data = data;
   }
@@ -213,9 +213,8 @@ export default class Embed {
    *
    * @param {EmbedConfig} config
    */
-  static prepare(params) {
-    console.log("params", params);
-    const { config: { services = {} } = {} } = params;
+  static prepare() {
+    const { services = {} } = this.config;
 
     console.log("config", config);
     console.log("services", services);
