@@ -244,11 +244,16 @@ export default class Embed {
         ];
       });
 
+    console.log("enabledServices", enabledServices);
+    console.log("userServices", userServices);
+
     if (enabledServices.length) {
       entries = entries.filter(([key]) => enabledServices.includes(key));
     }
 
     entries = entries.concat(userServices);
+
+    console.log("entries", entries);
 
     Embed.services = entries.reduce((result, [key, service]) => {
       if (!(key in result)) {
@@ -261,6 +266,8 @@ export default class Embed {
 
       return result;
     }, {});
+
+    console.log("Embed.services", Embed.services);
 
     Embed.patterns = entries.reduce((result, [key, item]) => {
       result[key] = item.regex;
