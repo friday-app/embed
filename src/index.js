@@ -212,8 +212,9 @@ export default class Embed {
    *
    * @param {EmbedConfig} config
    */
-  static prepare({ config = {} }) {
-    const { services = {} } = config;
+  static prepare(params) {
+    console.log("params", params);
+    const { config: { services = {} } = {} } = params;
 
     console.log("config", config);
     console.log("services", services);
