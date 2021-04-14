@@ -8,14 +8,6 @@ export default {
     height: 320,
     width: 580
   },
-  loom: {
-    regex: /https?:\/\/www.loom.com\/share\/([^\/\?\&]*)/,
-    embedUrl: "https://www.loom.com/embed/<%= remote_id %>",
-    html:
-      "<iframe height='300' scrolling='no' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
-    height: 300,
-    width: 600
-  },
   youtube: {
     regex: /(?:https?:\/\/)?(?:www\.)?(?:(?:youtu\.be\/)|(?:youtube\.com)\/(?:v\/|u\/\w\/|embed\/|watch))(?:(?:\?v=)?([^#&?=]*))?((?:[?&]\w*=\w*)*)/,
     embedUrl: "https://www.youtube.com/embed/<%= remote_id %>",

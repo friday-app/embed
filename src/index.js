@@ -10,6 +10,7 @@ import { debounce } from "debounce";
  * @property {string} embed - URL to source embed page
  * @property {number} [width] - embedded content width
  * @property {number} [height] - embedded content height
+ * @property {string} [caption] - content caption
  */
 /**
  * @typedef {object} Service
@@ -44,12 +45,11 @@ export default class Embed {
    *   api - Editor.js API
    *   readOnly - read-only mode flag
    */
-  constructor({ data, api, readOnly, config }) {
+  constructor({ data, api, readOnly }) {
     this.api = api;
     this._data = {};
     this.element = null;
     this.readOnly = readOnly;
-    this.config = config || {};
 
     this.data = data;
   }
@@ -61,20 +61,22 @@ export default class Embed {
    * @param {string} [data.html] - iframe which contains embedded content
    * @param {number} [data.height] - iframe height
    * @param {number} [data.width] - iframe width
+   * @param {string} [data.caption] - caption
    */
   set data(data) {
     if (!(data instanceof Object)) {
       throw Error("Embed Tool data should be object");
     }
 
-    const { service, source, embed, width, height } = data;
+    const { service, source, embed, width, height, caption = "" } = data;
 
     this._data = {
       service: service || this.data.service,
       source: source || this.data.source,
       embed: embed || this.data.embed,
       width: width || this.data.width,
-      height: height || this.data.height
+      height: height || this.data.height,
+      caption: caption || this.data.caption || ""
     };
 
     const oldView = this.element;
@@ -88,6 +90,12 @@ export default class Embed {
    * @returns {EmbedData}
    */
   get data() {
+    if (this.element) {
+      const caption = this.element.querySelector(`.${this.api.styles.input}`);
+
+      this._data.caption = caption ? caption.innerHTML : "";
+    }
+
     return this._data;
   }
 
@@ -103,6 +111,7 @@ export default class Embed {
       container: "embed-tool",
       containerLoading: "embed-tool--loading",
       preloader: "embed-tool__preloader",
+      caption: "embed-tool__caption",
       url: "embed-tool__url",
       content: "embed-tool__content"
     };
@@ -124,6 +133,7 @@ export default class Embed {
 
     const { html } = Embed.services[this.data.service];
     const container = document.createElement("div");
+    const caption = document.createElement("div");
     const template = document.createElement("template");
     const preloader = this.createPreloader();
 
@@ -132,8 +142,13 @@ export default class Embed {
       this.CSS.container,
       this.CSS.containerLoading
     );
+    caption.classList.add(this.CSS.input, this.CSS.caption);
 
     container.appendChild(preloader);
+
+    caption.contentEditable = !this.readOnly;
+    caption.dataset.placeholder = "Enter a caption";
+    caption.innerHTML = this.data.caption || "";
 
     template.innerHTML = html;
     template.content.firstChild.setAttribute("src", this.data.embed);
@@ -142,6 +157,7 @@ export default class Embed {
     const embedIsReady = this.embedIsReady(container);
 
     container.appendChild(template.content.firstChild);
+    container.appendChild(caption);
 
     embedIsReady.then(() => {
       container.classList.remove(this.CSS.containerLoading);
@@ -213,11 +229,9 @@ export default class Embed {
    *
    * @param {EmbedConfig} config
    */
-  static prepare() {
-    const { services = {} } = this.config;
-
-    console.log("config", this.config);
-    console.log("services", services);
+  static prepare({ config = {} }) {
+    console.log("config", config);
+    const { services = {} } = config;
 
     let entries = Object.entries(SERVICES);
 
@@ -248,16 +262,11 @@ export default class Embed {
         ];
       });
 
-    console.log("enabledServices", enabledServices);
-    console.log("userServices", userServices);
-
     if (enabledServices.length) {
       entries = entries.filter(([key]) => enabledServices.includes(key));
     }
 
     entries = entries.concat(userServices);
-
-    console.log("entries", entries);
 
     Embed.services = entries.reduce((result, [key, service]) => {
       if (!(key in result)) {
@@ -270,8 +279,6 @@ export default class Embed {
 
       return result;
     }, {});
-
-    console.log("Embed.services", Embed.services);
 
     Embed.patterns = entries.reduce((result, [key, item]) => {
       result[key] = item.regex;
